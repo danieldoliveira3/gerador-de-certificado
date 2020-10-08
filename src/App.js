@@ -11,11 +11,11 @@ function App() {
   const [nome, setNome] = useState("");
   const [texto, setTexto] = useState("");
   const [emissao, setEmissao] = useState("");
-  const doc = new jsPDF({
-    orientation: "landscape",
-    unit: "in",
-    format: [22.46, 15.88]
-  });
+  // const doc = new jsPDF({
+  //   orientation: "landscape",
+  //   unit: "in",
+  //   format: [22.46, 15.88]
+  // });
 
   var zip = new JSZip();
   function salvar() {
@@ -27,9 +27,18 @@ function App() {
 
       nameArray.map(
         name => {
-          doc.setFontSize(50)
-          doc.setFont("Helvetica", "bold")
-          doc.text(name.toLocaleUpperCase(), centro, 5.8, { align: "center", maxWidth: 12 });
+          const doc = new jsPDF({
+            orientation: "landscape",
+            unit: "in",
+            format: [22.46, 15.88]
+          });
+
+          // doc.text("", centro, 5.8, { align: "center", maxWidth: 12 });
+          // doc.text(name.toLocaleUpperCase(), centro, 5.8, { align: "center", maxWidth: 12 });
+          setImage(doc)
+          setName(doc, name)
+          setEventText(doc)
+          setEmissionDate(doc)
           zip.file(name + ".pdf", doc.output("blob"));
         })
 
@@ -42,22 +51,34 @@ function App() {
 
   }
   const centro = (22.46 / 2) + 2.5;
-  doc.addImage(certificado, "png", 0, 0, 22.46, 15.88)
+
+
+  function setImage(documento) {
+    return documento.addImage(certificado, "png", 0, 0, 22.46, 15.88)
+  }
   //name of the person
   // doc.setFontSize(50)
   // doc.setFont("Helvetica", "bold")
-
+  function setName(documento, name) {
+    documento.setFontSize(50)
+    documento.setFont("Helvetica", "bold")
+    return documento.text(name.toLocaleUpperCase(), centro, 5.8, { align: "center", maxWidth: 12 });
+  }
   // doc.text(nome.toLocaleUpperCase(), centro, 5.8, { align: "center", maxWidth: 12 });
 
   //text of the event
-  doc.setFontSize(35)
-  doc.setFont("Helvetica", "normal")
-  doc.text(texto, centro - 6, 7.8, { align: "justify", maxWidth: 12 });
+  function setEventText(documento) {
+    documento.setFontSize(35)
+    documento.setFont("Helvetica", "normal")
+    documento.text(texto, centro - 6, 7.8, { align: "justify", maxWidth: 12 });
+  }
 
   //date of emission
-  doc.setFontSize(35)
-  doc.setFont("Helvetica", "normal")
-  doc.text(emissao, centro, 10.9, { align: "right", maxWidth: 12 });
+  function setEmissionDate(documento) {
+    documento.setFontSize(35)
+    documento.setFont("Helvetica", "normal")
+    documento.text(emissao, centro, 10.9, { align: "right", maxWidth: 12 });
+  }
 
   // doc.save("a4.pdf"); // will save the file in the current working directory
   return (
